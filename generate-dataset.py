@@ -3,7 +3,7 @@ import os
 from PIL import Image
 
 path = f"../../../android/assets/pokemon/pokemon/"
-output_dir = f"./pokemon/all/"
+output_dir = f"./pokemon/"
 
 # Image sizes have to be a power of 2 for vae
 size = 64
@@ -39,16 +39,22 @@ for root, dirnames, _ in os.walk(path):
         # Crop out the top of the image.
         output.paste(image, (offset_x, offset_y))
 
-        # Save the cropped image to output directory.
-        pokemon_name = dirname
-        output.save(output_dir + pokemon_name + ".png", "png") 
-
         with open(fullpath, 'r') as f:
             lines = f.readlines()
 
         # Parse out type information.
         type1, type2 = lines[5].split("db ")[1].split(";")[0].strip().split(", ")
 
+        vae_class = type1.lower() + " " + type2.lower()
+
+        # Save the cropped image to output directory.
+        pokemon_name = dirname
+        fullpath = os.path.join(output_dir, vae_class)
+        if not os.path.exists(fullpath):
+            os.mkdir(fullpath)
+
+        output.save(os.path.join(fullpath, pokemon_name + ".png"), "png") 
+
         # Save type information to file.
-        with open(output_dir + pokemon_name + ".txt", 'w') as f:
-            f.write(type1.lower() + " " + type2.lower())
+        with open(os.path.join(fullpath, pokemon_name + ".txt"), 'w') as f:
+            f.write(vae_class)
