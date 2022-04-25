@@ -3,7 +3,10 @@ import os
 from PIL import Image
 
 path = f"../../../android/assets/pokemon/pokemon/"
-output_dir = f"./pokemon/"
+output_dir = f"./pokemon/all/"
+
+# Image sizes have to be a power of 2 for vae
+size = 64
 
 for root, dirnames, _ in os.walk(path):
 
@@ -27,11 +30,11 @@ for root, dirnames, _ in os.walk(path):
             continue
 
         # Create the output image.
-        output = Image.new('RGBA', (56, 56), (255, 255, 255, 0))
+        output = Image.new('RGBA', (size, size), (255, 255, 255, 0))
 
         # Offsets ensure that image is bottom-center of the 56x56 output.
-        offset_x = (int)((56 - width) / 2)
-        offset_y =  (int)(56 - width)
+        offset_x = (int)((size - width) / 2)
+        offset_y =  (int)(size - width)
 
         # Crop out the top of the image.
         output.paste(image, (offset_x, offset_y))
