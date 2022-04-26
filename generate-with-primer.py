@@ -133,15 +133,15 @@ for j, text in tqdm(enumerate(texts)):
         T.ToTensor()
 		])
 
-    image_files = {"input": "input.png"}
     pil_image = PIL.Image.open("input.png")
     img_primer = image_transform(pil_image)
+    img_primer = torch.stack([img_primer] * 4)
 
     for text_chunk in tqdm(text_tokens.split(args.batch_size), desc = f'generating images for - {text}'):
         output = dalle.generate_images(
             text_chunk,
             filter_thres = args.top_k,
-            img = img_primer,
+            img = img_primer.cuda(),
             num_init_img_tokens = (14 * 32)
         )
         outputs.append(output)
