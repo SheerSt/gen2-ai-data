@@ -30,14 +30,22 @@ for root, dirnames, _ in os.walk(path):
             continue
 
         # Create the output image.
-        output = Image.new('RGBA', (size, size), (255, 255, 255, 0))
+        output = Image.new('RGB', (size, size), (255, 255, 255))
 
         # Offsets ensure that image is bottom-center of the 56x56 output.
         offset_x = (int)((size - width) / 2)
-        offset_y =  (int)(size - width)
+        offset_y = (int)(size - width)
 
         # Crop out the top of the image.
-        output.paste(image, (offset_x, offset_y))
+        # output.paste(image, (offset_x, offset_y))
+
+        # Required to fixup images because the alpha channel is using black.
+        for x in range(width):
+            for y in range(width):
+                r, g, b, a = image.getpixel((x, y))
+                if a == 0:
+                    r, g, b = (255, 255, 255)
+                output.putpixel((x + offset_x, y + offset_y), (r, g, b))
 
         with open(fullpath, 'r') as f:
             lines = f.readlines()
