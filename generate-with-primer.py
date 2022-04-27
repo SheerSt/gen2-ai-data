@@ -125,7 +125,6 @@ for j, text in tqdm(enumerate(texts)):
 
     outputs = []
 
-    image_size = 128  # idk how to determine this value.
     image_transform = T.Compose([
         T.Lambda(lambda img: img.convert('RGB') if img.mode != 'RGB' else img),
         T.Resize(image_size),
@@ -133,7 +132,7 @@ for j, text in tqdm(enumerate(texts)):
         T.ToTensor()
 		])
 
-    pil_image = PIL.Image.open("input.png")
+    pil_image = PIL.Image.open("input.jpg")
     img_primer = image_transform(pil_image)
     img_primer = torch.stack([img_primer] * 4)
 
@@ -142,7 +141,7 @@ for j, text in tqdm(enumerate(texts)):
             text_chunk,
             filter_thres = args.top_k,
             img = img_primer.cuda(),
-            num_init_img_tokens = (14 * 32)
+            num_init_img_tokens = (14 * 32 * 2)  # Note: added a  * 2 here, recommended was just 14 * 32
         )
         outputs.append(output)
 
